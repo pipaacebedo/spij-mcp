@@ -1,5 +1,7 @@
 # spij-mcp
 
+![spij-mcp](assets/banner.png)
+
 ![Licencia](https://img.shields.io/badge/licencia-Apache--2.0-blue)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-compatible-8a2be2)
@@ -11,7 +13,7 @@ Tribunal Constitucional y más) — desde tu harness MCP.
 
 > Herramienta **no oficial**: sin afiliación con MINJUS ni con el SPIJ.
 
-| | |
+| Aspecto | Detalle |
 |---|---|
 | Fuente de datos | [spij.minjus.gob.pe](https://spij.minjus.gob.pe/spij-ext-web/#/sidenav/resultado) (público) |
 | Autenticación | Implícita: usa la misma sesión pública del sitio web y se renueva sola (JWT de 24 h) |
