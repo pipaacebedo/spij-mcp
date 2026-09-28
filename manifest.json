@@ -1,0 +1,25 @@
+{
+  "dxt_version": "0.1",
+  "name": "spij-mcp",
+  "display_name": "spij-mcp",
+  "version": "0.6.1",
+  "description": "Busca y lee el SPIJ de Peru (normas legales, jurisprudencia, TC) desde tu harness MCP.",
+  "author": {
+    "name": "pipaacebedo",
+    "url": "https://github.com/pipaacebedo"
+  },
+  "license": "Apache-2.0",
+  "keywords": ["peru", "legal", "normas-legales", "spij", "jurisprudencia", "mcp"],
+  "server": {
+    "type": "python",
+    "entrypoint": "server.py",
+    "mcp_config": {
+      "command": "python",
+      "args": ["${__dirname}/server.py"],
+      "env": {}
+    }
+  },
+  "dependencies": {
+    "python": ["mcp>=1.28,<2", "httpx>=0.27"]
+  }
+}
