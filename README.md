@@ -24,7 +24,7 @@ Tribunal Constitucional y más) — desde tu harness MCP.
 
 ### Opción A — Un click (sin terminal)
 
-1. Descarga **`spij-mcp-0.6.2.mcpb`** desde [Releases](https://github.com/pipaacebedo/spij-mcp/latest).
+1. Descarga **`spij-mcp-0.6.2.mcpb`** desde [Releases](https://github.com/pipaacebedo/spij-mcp/releases).
 2. Abre Claude Desktop → **Ajustes → Extensiones → Instalar desde archivo**.
 3. Selecciona el `.mcpb` y listo.
 
