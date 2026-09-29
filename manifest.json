@@ -1,25 +1,76 @@
 {
-  "dxt_version": "0.1",
+  "manifest_version": "0.4",
   "name": "spij-mcp",
   "display_name": "spij-mcp",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Busca y lee el SPIJ de Peru (normas legales, jurisprudencia, TC) desde tu harness MCP.",
+  "long_description": "Servidor MCP local para el SPIJ - Sistema Peruano de Informacion Juridica. 7 tools con busqueda filtrada (normas y jurisprudencia), lectura progresiva de textos por offsets (estructura, saltos por palabra, rangos) y diagnostico de busqueda integrado. Usa la misma sesion publica del sitio web: el servidor se autentica y renueva su token solo. Nunca guarda archivos. Proyecto NO oficial, Apache-2.0.",
   "author": {
     "name": "pipaacebedo",
     "url": "https://github.com/pipaacebedo"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pipaacebedo/spij-mcp.git"
+  },
   "license": "Apache-2.0",
-  "keywords": ["peru", "legal", "normas-legales", "spij", "jurisprudencia", "mcp"],
+  "keywords": [
+    "peru",
+    "legal",
+    "normas-legales",
+    "spij",
+    "minjus",
+    "jurisprudencia",
+    "mcp"
+  ],
   "server": {
-    "type": "python",
-    "entrypoint": "server.py",
+    "type": "uv",
+    "entry_point": "server.py",
     "mcp_config": {
-      "command": "python",
-      "args": ["${__dirname}/server.py"],
-      "env": {}
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "server.py"
+      ]
     }
   },
-  "dependencies": {
-    "python": ["mcp>=1.28,<2", "httpx>=0.27"]
+  "tools": [
+    {
+      "name": "buscar_normas",
+      "description": "Busqueda full-text de normas con filtros (dispositivo, sector, numero, fechas) y paginacion"
+    },
+    {
+      "name": "buscar_jurisprudencia",
+      "description": "Busqueda de jurisprudencia (TC, cortes, precedentes) con filtro local por organismo"
+    },
+    {
+      "name": "estructura_norma",
+      "description": "Indice de encabezados de una norma con offsets navegables"
+    },
+    {
+      "name": "buscar_en_norma",
+      "description": "Ocurrencias de una palabra o frase dentro del texto de una norma, con offsets"
+    },
+    {
+      "name": "detalle_norma",
+      "description": "Metadatos y texto plano de una norma por id (lectura por rangos)"
+    },
+    {
+      "name": "texto_completo",
+      "description": "Texto completo garantizado de una norma o sentencia (desde_final=True lee el RESUELVE)"
+    },
+    {
+      "name": "listar_filtros",
+      "description": "Valores exactos para los filtros: dispositivos, sectores, tomos, materias, agrupaciones"
+    }
+  ],
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ]
   }
 }

@@ -24,12 +24,12 @@ Tribunal Constitucional y más) — desde tu harness MCP.
 
 ### Opción A — Un click (sin terminal)
 
-1. Descarga **`spij-mcp-0.6.1.mcpb`** desde [Releases](releases/latest).
+1. Descarga **`spij-mcp-0.6.2.mcpb`** desde [Releases](releases/latest).
 2. Abre Claude Desktop → **Ajustes → Extensiones → Instalar desde archivo**.
 3. Selecciona el `.mcpb` y listo.
 
-> Requisito: **Python 3.10+** instalado en el sistema (el `.mcpb` trae el
-> código; las dependencias se instalan la primera vez que arranca).
+> No requiere Python instalado: el instalador resuelve el runtime y las
+> dependencias automáticamente (runtime UV de MCPB).
 
 ### Opción B — Manual (CLI y otros agentes)
 

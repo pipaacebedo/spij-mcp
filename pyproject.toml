@@ -1,6 +1,6 @@
 [project]
 name = "spij-mcp"
-version = "0.6.1"
+version = "0.6.2"
 description = "MCP local para buscar y leer el SPIJ (Sistema Peruano de Informacion Juridica). No oficial."
 readme = "README.md"
 requires-python = ">=3.10"

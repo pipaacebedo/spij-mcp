@@ -1,0 +1,8 @@
+# exclude del bundle (solo se empaqueta lo esencial)
+.venv/
+__pycache__/
+dist/
+assets/
+*.pyc
+*.mcpb
+.mcpbignore
