@@ -69,6 +69,11 @@ Y añade a la configuración de servidores MCP de tu agente:
 El servidor envía sus instrucciones de uso por el handshake MCP: el agente
 sabe cómo buscar y leer sin prompts adicionales.
 
+## Actualizaciones
+
+- El servidor se auto-chequea en cada arranque: si publicamos una versión más nueva que la tuya, tu agente verá el aviso `UPDATE DISPONIBLE` y te pedirá descargar `spij-mcp.mcpb` de [Releases](https://github.com/pipaacebedo/spij-mcp/releases/latest) e instalarlo de nuevo (arrástralo como la primera vez). Se desactiva con `SPIJ_UPDATE_CHECK=0`.
+- Cada versión reemplaza el mismo archivo (`spij-mcp.mcpb`): la página de Releases siempre muestra una sola tarjeta con la última.
+
 ## Tools
 
 | Tool | Qué hace |

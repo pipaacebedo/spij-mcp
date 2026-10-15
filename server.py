@@ -12,14 +12,18 @@ autenticacion usa la misma sesion publica del sitio web y se renueva sola
 import asyncio
 import html
 import json
+import logging
 import os
 import re
 import time
 import unicodedata
+from pathlib import Path
 from typing import Any, Awaitable, Callable, Optional
 
 import httpx
 from mcp.server.fastmcp import FastMCP
+
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 BASE_BACK = os.getenv("SPIJ_BACK", "https://spijwsii.minjus.gob.pe/spij-ext-back/")
 BASE_SOLR = os.getenv("SPIJ_SOLR", "https://spijwsii.minjus.gob.pe/spij-ext-solr/")
@@ -74,7 +78,47 @@ _INSTRUCCIONES = (
     "siempre: id + codigoNorma + fechaPublicacion + url_web."
 )
 
-mcp = FastMCP("spij-mcp", instructions=_INSTRUCCIONES, stateless_http=True)
+_REPO_GITHUB = "pipaacebedo/spij-mcp"
+_VERSION = "0.0.0"
+try:
+    _VERSION = str(json.loads(Path(__file__).resolve().parent.joinpath("manifest.json").read_text(encoding="utf-8")).get("version", _VERSION))
+except Exception:
+    pass
+
+
+def _semver_mayor(remota: str, instalada: str) -> bool:
+    def partes(v: str) -> list[int]:
+        return [int(x) for x in re.findall(r"\d+", v)[:3]] or [0]
+
+    return partes(remota) > partes(instalada)
+
+
+def _update_remota() -> str:
+    """tag semver de un release mas nuevo que el instalado; '' si no hay, si esta desactivado (SPIJ_UPDATE_CHECK=0) o si el chequeo falla (NUNCA lanza)."""
+    if os.getenv("SPIJ_UPDATE_CHECK", "1").strip() in ("0", "false", "no"):
+        return ""
+    try:
+        r = httpx.get(f"https://api.github.com/repos/{_REPO_GITHUB}/releases?per_page=5", headers={"Accept": "application/vnd.github+json", "User-Agent": "spij-mcp"}, timeout=3.0)
+        for rel in (r.json() or []):
+            tag = str(rel.get("tag_name", ""))
+            if re.fullmatch(r"v?\d+\.\d+(\.\d+)?", tag) and _semver_mayor(tag, _VERSION):
+                return tag.lstrip("v")
+        return ""
+    except Exception:
+        return ""
+
+
+def _linea_update() -> str:
+    """parrafo UPDATE DISPONIBLE para _INSTRUCCIONES; '' si no hay version mas nueva."""
+    remota = _update_remota()
+    if not remota:
+        return ""
+    return f"UPDATE DISPONIBLE - existe la version v{remota} (instalada v{_VERSION}): pide al usuario descargar el .mcpb nuevo y reinstalarlo (https://github.com/{_REPO_GITHUB}/releases/latest).\n"
+
+
+_INSTRUCCIONES += _linea_update()
+
+mcp = FastMCP("Sistema Peruano de Info. Juridica - SPIJ (No oficial)", instructions=_INSTRUCCIONES, stateless_http=True)
 
 _CLIENT: Optional[httpx.AsyncClient] = None
 _SEM: Optional[asyncio.Semaphore] = None
@@ -535,7 +579,7 @@ async def _lista_sectores_unicos() -> list[str]:
 
 # ---------------------------------------------------------------------- tools
 
-@mcp.tool()
+@mcp.tool(title="Listando filtros")
 async def listar_filtros(categoria: Optional[str] = None,
                          tomo: Optional[str] = None) -> dict:
     """Lista los valores validos para los filtros del SPIJ.
@@ -643,7 +687,7 @@ async def _resuelve_materia(tomo: str, materia: Optional[str]) -> tuple[Optional
     return eleccion, (cand or nombres[:8])
 
 
-@mcp.tool()
+@mcp.tool(title="Buscando normas")
 async def buscar_normas(consulta: Optional[str] = None,
                         sumilla: Optional[str] = None,
                         dispositivo: Optional[str] = None,
@@ -766,7 +810,7 @@ async def buscar_normas(consulta: Optional[str] = None,
         return {"ok": False, "error": str(e)}
 
 
-@mcp.tool()
+@mcp.tool(title="Buscando jurisprudencia")
 async def buscar_jurisprudencia(consulta: Optional[str] = None,
                                 tomo: Optional[str] = None,
                                 materia: Optional[str] = None,
@@ -989,7 +1033,7 @@ def _organismos_de_docs(docs: list) -> list:
     return sorted(vistos)[:12]
 
 
-@mcp.tool()
+@mcp.tool(title="Mapeando la estructura de la norma")
 async def estructura_norma(id: str) -> dict:
     """Devuelve el INDICE de encabezados de una norma del SPIJ, con el
     offset de cada uno para leer secciones concretas con
@@ -1039,7 +1083,7 @@ async def estructura_norma(id: str) -> dict:
         return {"ok": False, "error": str(e)}
 
 
-@mcp.tool()
+@mcp.tool(title="Buscando dentro de la norma")
 async def buscar_en_norma(id: str, texto: str, contexto: int = 200,
                           max_matches: int = 10) -> dict:
     """Busca una palabra o frase DENTRO del texto completo de una norma del
@@ -1109,7 +1153,7 @@ async def _word_html(nid: str) -> str:
                                lambda: _do_back("api/procesarword/" + nid))
 
 
-@mcp.tool()
+@mcp.tool(title="Obteniendo detalle de la norma")
 async def detalle_norma(id: str, offset: int = 0, max_chars: int = 0,
                         desde_final: bool = False) -> dict:
     """Devuelve los METADATOS y el TEXTO de una norma del SPIJ por su id.
@@ -1170,7 +1214,7 @@ async def detalle_norma(id: str, offset: int = 0, max_chars: int = 0,
         return {"ok": False, "error": str(e)}
 
 
-@mcp.tool()
+@mcp.tool(title="Leyendo el texto completo")
 async def texto_completo(id: str, offset: int = 0, max_chars: int = 0,
                          desde_final: bool = False) -> dict:
     """Devuelve el TEXTO COMPLETO de una norma o jurisprudencia del SPIJ.

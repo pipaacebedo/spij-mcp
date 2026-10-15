@@ -1,5 +1,6 @@
 # exclude del bundle (solo se empaqueta lo esencial)
 .venv/
+.git
 __pycache__/
 dist/
 assets/
